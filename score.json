@@ -1,11 +1,22 @@
 {
     "users": [
         {
-            "userID": 89573498174359871543,
-            "points": 192543
+            "name": "thesmallnut_bot",
+            "points": 80
+        },
+        {
+            "name": "moobot",
+            "points": 80
+        },
+        {
+            "name": "nightbot",
+            "points": 60
+        },
+        {
+            "name": "streamelements",
+            "points": 80
         }
     ],
-    "pots": [],
     "currentlyWatching": [
         "thesmallnut_bot",
         "streamelements",

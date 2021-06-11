@@ -8,6 +8,9 @@ CHANNELS = ["thesmallnut"]
 FILE_NAME = "score.json"
 BOT_NAME = "TheSmallNut_Bot"
 TIMER_REFRESH_TIME = 5.0
+ADDITIVE_POINTS = 10
+TIME_TO_ADD_POINTS = 300
+DEFAULT_STARTING_POINTS = 40
 
 # Globals
 isTimerRunning = False
@@ -26,6 +29,25 @@ def actuallyWriteJsonDoc():
     print(f"Writing to disk | {currentTime}")
     with open(FILE_NAME, 'w') as f:
         json.dump(score, f, indent=4)
+
+def makePage(pageCreationUser):
+    for user in score["users"]:
+        if pageCreationUser == user["name"]:
+            return user
+    score["users"].append({})
+    location = score["users"][-1]
+    location["name"] = pageCreationUser
+    location["points"] = 40
+    writeJsonDoc()
+    return location
+
+def addPoints():
+    for user in score["currentlyWatching"]:
+        currentUser = makePage(user)
+        currentUser["points"] += ADDITIVE_POINTS
+    writeJsonDoc()
+    t = Timer(TIME_TO_ADD_POINTS, addPoints)
+    t.start()
 
 def writeJsonDoc():
     global isTimerRunning
@@ -61,6 +83,7 @@ async def event_message(ctx):
 
 @bot.event
 async def event_part(user):
+    makePage(user)
     if user.name in score["currentlyWatching"]:
         score["currentlyWatching"].remove(user.name)
         writeJsonDoc()
@@ -78,4 +101,5 @@ async def event_join(user):
 score = openJsonDoc()
 score["currentlyWatching"] = []
 writeJsonDoc()
+addPoints()
 bot.run()
