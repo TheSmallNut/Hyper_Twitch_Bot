@@ -1,2 +1,2 @@
-# Hyper_Twitch_Bot
-Hyper And Bytez twitch bot
+# CDUB Twitch Bot
+CDUB Twitch Bot

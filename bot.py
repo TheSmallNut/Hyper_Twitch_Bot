@@ -1,56 +1,81 @@
 from twitchio.ext import commands
-import json, time
+import json, time, requests, tokens
+from threading import Thread, Timer
+from datetime import datetime
 
-def openJsonDoc(nameOfDoc = "score"):
-    with open(f'{nameOfDoc}.json', 'r') as f:
+# Constants
+CHANNELS = ["thesmallnut"]
+FILE_NAME = "score.json"
+BOT_NAME = "TheSmallNut_Bot"
+TIMER_REFRESH_TIME = 5.0
+
+# Globals
+isTimerRunning = False
+timer = None
+
+def openJsonDoc():
+    with open(FILE_NAME, 'r') as f:
         data = json.load(f)
     return data
 
-score = openJsonDoc()
+def actuallyWriteJsonDoc():
+    global isTimerRunning
+    isTimerRunning = False
+    time = datetime.now()
+    currentTime = time.strftime("%H:%M:%S   %D")
+    print(f"Writing to disk | {currentTime}")
+    with open(FILE_NAME, 'w') as f:
+        json.dump(score, f, indent=4)
 
-def writeJsonDoc(dumpData = score, location = "score"):
-    with open(f'{location}.json', 'w') as f:
-        json.dump(dumpData, f, indent=4)
+def writeJsonDoc():
+    global isTimerRunning
+    if isTimerRunning:
+        # do nothing... it's going to write anyway
+        return
+    isTimerRunning = True
+    Timer(TIMER_REFRESH_TIME, actuallyWriteJsonDoc).start()
+
 
 bot = commands.Bot(
-    irc_token = "",
-    client_id = "",
-    nick = 'TheSmallNut_Bot',
-    prefix = "+",
-    initial_channels = ["itzbytez", "whoishyper", "thesmallnut"]
+    irc_token = tokens.token,
+    client_id = tokens.clientID,
+    nick = BOT_NAME,
+    prefix = "+hnbt84yu53n7834t7843tbny8h348g4h325hg8",
+    initial_channels = CHANNELS
 )
 
 @bot.event
 async def event_ready():
     print(f"Logged into Twitch | {bot.nick} ")
 
+
 @bot.event
 async def event_message(ctx):
     await bot.handle_commands(ctx)
 
-@bot.event
-async def after_invoke(ctx):
+# @bot.event
+# async def after_invoke(ctx):
     
-    print(ctx.content)
-
-@bot.command(name='hyper', aliases=["HYPER", "Hyper"])
-async def addToHyper(ctx):
-    score["Hyper"] += 1
-    await ctx.send(f"Added 1 point to Hyper, Hyper : {score['Hyper']} Bytez : {score['Bytez']}")
-    writeJsonDoc()
-    time.sleep(1)
+#     print(ctx.content)
 
 
-@bot.command(name='bytez', aliases=["BYTEZ", "Bytez"])
-async def addToBytez(ctx):
-    score["Bytez"] += 1
-    await ctx.send(f"Added 1 point to Bytez, Hyper : {score['Hyper']} Bytez : {score['Bytez']}")
-    writeJsonDoc()
-    time.sleep(1)
+@bot.event
+async def event_part(user):
+    if user.name in score["currentlyWatching"]:
+        score["currentlyWatching"].remove(user.name)
+        writeJsonDoc()
+    #print(user.name + " just left")
 
-@bot.command(name='points', aliases=["POINTS", "Points"])
-async def displayPoints(ctx):
-    await ctx.send(f"Hyper : {score['Hyper']} Bytez : {score['Bytez']}")
-    time.sleep(1)
+@bot.event
+async def event_join(user):
+    user_name = user.name.rstrip()
+    if user_name not in score["currentlyWatching"]:
+        score["currentlyWatching"].append(user_name)
+        writeJsonDoc()
+        #print(user_name + " just joined")
 
+
+score = openJsonDoc()
+score["currentlyWatching"] = []
+writeJsonDoc()
 bot.run()

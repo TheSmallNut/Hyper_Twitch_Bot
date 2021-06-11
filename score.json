@@ -1,4 +1,15 @@
 {
-    "Hyper": 27,
-    "Bytez": 15
+    "users": [
+        {
+            "userID": 89573498174359871543,
+            "points": 192543
+        }
+    ],
+    "pots": [],
+    "currentlyWatching": [
+        "thesmallnut_bot",
+        "streamelements",
+        "moobot",
+        "nightbot"
+    ]
 }
