@@ -102,12 +102,8 @@ async def event_join(user):
         writeJsonDoc()
         #print(user_name + " just joined")
 
-
 score = openJsonDoc()
 score["currentlyWatching"] = []
 writeJsonDoc()
 addPoints()
-try:   
-    bot.run()
-except (RuntimeWarning):
-    pass
+bot.run()
