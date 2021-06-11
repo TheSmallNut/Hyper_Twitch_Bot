@@ -2,15 +2,15 @@
     "users": [
         {
             "name": "thesmallnut_bot",
-            "points": 80
+            "points": 90
         },
         {
             "name": "moobot",
-            "points": 80
+            "points": 90
         },
         {
             "name": "nightbot",
-            "points": 60
+            "points": 70
         },
         {
             "name": "streamelements",
@@ -18,9 +18,6 @@
         }
     ],
     "currentlyWatching": [
-        "thesmallnut_bot",
-        "streamelements",
-        "moobot",
-        "nightbot"
+        "thesmallnut_bot"
     ]
 }

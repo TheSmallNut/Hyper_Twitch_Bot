@@ -1,7 +1,8 @@
 from twitchio.ext import commands
-import json, time, requests, tokens
+import json, time, requests, tokens, sys
 from threading import Thread, Timer
 from datetime import datetime
+
 
 # Constants
 CHANNELS = ["thesmallnut"]
@@ -47,7 +48,11 @@ def addPoints():
         currentUser["points"] += ADDITIVE_POINTS
     writeJsonDoc()
     t = Timer(TIME_TO_ADD_POINTS, addPoints)
-    t.start()
+    try:
+        t.start()
+    except (KeyboardInterrupt, SystemExit):
+        t.cancel()
+        sys.exit()
 
 def writeJsonDoc():
     global isTimerRunning
@@ -102,4 +107,7 @@ score = openJsonDoc()
 score["currentlyWatching"] = []
 writeJsonDoc()
 addPoints()
-bot.run()
+try:   
+    bot.run()
+except (RuntimeWarning):
+    pass
